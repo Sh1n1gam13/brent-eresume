@@ -426,6 +426,84 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
   .hc{width:28px;height:28px;}
   .ss-num{font-size:1.25rem;}
 }
+
+/* ═══ PHOTO PLACEHOLDER ════════════════════════ */
+.photo-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:.65rem;
+  margin-bottom:.2rem;
+}
+.photo-ring-outer{
+  position:relative;width:130px;height:130px;flex-shrink:0;
+}
+.photo-ring-outer::before{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  background:conic-gradient(var(--cyan),var(--mag),var(--cyan));
+  animation:spinRing 4s linear infinite;
+}
+.photo-ring-outer::after{
+  content:'';position:absolute;inset:-2px;border-radius:50%;
+  background:var(--bg);
+}
+@keyframes spinRing{to{transform:rotate(360deg);}}
+.photo-circle{
+  position:absolute;inset:4px;border-radius:50%;
+  background:linear-gradient(135deg,#010c14,#021828);
+  border:1px solid rgba(0,245,255,.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;z-index:1;
+}
+.photo-circle img{
+  width:100%;height:100%;object-fit:cover;border-radius:50%;
+}
+.photo-placeholder-ico{
+  font-size:2.8rem;line-height:1;
+  filter:drop-shadow(0 0 8px rgba(0,245,255,.5));
+}
+.photo-placeholder-lbl{
+  font-family:'Share Tech Mono',monospace;font-size:.45rem;
+  letter-spacing:.14em;color:var(--cyan3);margin-top:.2rem;
+  text-transform:uppercase;
+}
+.photo-scan{
+  position:absolute;left:0;right:0;height:2px;
+  background:rgba(0,245,255,.5);z-index:2;
+  animation:photoScan 2.5s linear infinite;
+}
+@keyframes photoScan{0%{top:4px;opacity:1;}100%{top:calc(100% - 4px);opacity:0;}}
+.photo-email-tag{
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  color:var(--cyan2);background:rgba(0,245,255,.06);
+  border:1px solid rgba(0,245,255,.18);padding:.22rem .65rem;
+  border-radius:2px;letter-spacing:.06em;
+}
+
+/* HERO CARD PHOTO */
+.phc-photo{
+  width:100%;height:230px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#000c18,#021828);
+  display:flex;align-items:center;justify-content:center;
+}
+.phc-photo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 45%,rgba(1,12,20,.95));
+}
+.phc-photo-ico{
+  font-size:5.5rem;filter:drop-shadow(0 0 16px rgba(0,245,255,.4));
+  animation:breathe 3s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+.phc-photo img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.phc-photo-frame{
+  position:absolute;inset:10px;border:1px solid rgba(0,245,255,.12);
+  border-radius:2px;z-index:1;pointer-events:none;
+}
+.phc-photo-frame::before,.phc-photo-frame::after{
+  content:'';position:absolute;width:14px;height:14px;
+}
+.phc-photo-frame::before{top:-1px;left:-1px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);}
+.phc-photo-frame::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);}
 </style>
 </head>
 <body>
@@ -441,13 +519,26 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
   <div class="hc tl"></div><div class="hc tr"></div>
   <div class="hc bl"></div><div class="hc br"></div>
   <div class="hud-top">// DIGITAL E-RESUME &nbsp;·&nbsp; BWMORTA.SYS &nbsp;·&nbsp; v2.0 &nbsp;<span class="blink">▮</span></div>
-  <div class="hud-bot"><div class="live-dot"></div>SYSTEM ONLINE &nbsp;·&nbsp; CAVITE CITY, PH &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="513323343f252b2861606211363c30383d7f323e3c">[email&#160;protected]</a></div>
+  <div class="hud-bot"><div class="live-dot"></div>SYSTEM ONLINE &nbsp;·&nbsp; CAVITE CITY, PH &nbsp;·&nbsp; brentzy013@gmail.com</div>
 
   <div class="showcase-outer">
     <div class="showcase-grid">
       <!-- LEFT -->
       <div class="s-left">
         <div class="s-badge a1"><span class="live-dot"></span>DIGITAL E-RESUME — BRENT WARREN MORTA</div>
+
+        <!-- PHOTO PLACEHOLDER -->
+        <div class="photo-wrap a1">
+          <div class="photo-ring-outer">
+            <div class="photo-circle">
+              <div class="photo-scan"></div>
+              <div class="photo-placeholder-ico">👤</div>
+              <div class="photo-placeholder-lbl">YOUR PHOTO</div>
+            </div>
+          </div>
+          <div class="photo-email-tag">📧 brentzy013@gmail.com</div>
+        </div>
+
         <h1 class="s-name a2">
           <div class="glitch-t" data-t="BRENT WARREN">BRENT WARREN</div>
           <div class="glitch-t cyan-t" data-t="MORTA">MORTA</div>
@@ -462,7 +553,7 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
           <a id="sl-linkedin" href="https://www.linkedin.com/in/brent-warren-morta-60327a3b4/" target="_blank" class="s-link">🔗 LinkedIn</a>
           <a id="sl-facebook" href="https://www.facebook.com/search/top?q=Brent%20Warren%20Morta" target="_blank" class="s-link mag">📘 Facebook</a>
           <span class="s-link" id="sl-viber">📱 Viber: 09556273936</span>
-          <span class="s-link" id="sl-email">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="620010070c16181b52535122050f030b0e4c010d0f">[email&#160;protected]</a></span>
+          <a href="mailto:brentzy013@gmail.com" class="s-link" id="sl-email">📧 brentzy013@gmail.com</a>
         </div>
         <div class="s-ctas a6">
           <button class="btn-view" id="btn-view"><span>▶ &nbsp;VIEW MY PORTFOLIO</span></button>
@@ -511,7 +602,7 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
     <div class="term-win">
       <div class="term-bar">
         <div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>
-        <span class="term-ttl">AUTHORIZATION TERMINAL — <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7c1e0b113c0c130e081a1310151352190419">[email&#160;protected]</a></span>
+        <span class="term-ttl">AUTHORIZATION TERMINAL — bwm@portfolio.exe</span>
       </div>
       <div class="term-body">
         <div class="tl dim">$ sudo admin --portfolio=bwm --request=elevated</div>
@@ -675,13 +766,16 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
       </div>
       <div class="phero-card">
         <div class="phc-scan"></div>
-        <div class="phc-img">👨‍💻</div>
+        <div class="phc-photo">
+          <div class="phc-photo-frame"></div>
+          <div class="phc-photo-ico">👤</div>
+        </div>
         <div class="phc-body">
           <div class="phc-badge"><span class="live-dot" style="width:5px;height:5px;margin-right:.3rem"></span>AVAILABLE FOR INTERNSHIP</div>
           <div class="phc-name">Brent Warren Morta</div>
           <div class="phc-role">> CompE Intern / Designer</div>
           <div class="phc-row">📍 <span id="phc-loc">Cavite City, Philippines</span></div>
-          <div class="phc-row">📧 <span id="phc-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="543626313a202e2d646567143339353d387a373b39">[email&#160;protected]</a></span></div>
+          <div class="phc-row">📧 <span id="phc-email">brentzy013@gmail.com</span></div>
           <div class="phc-row">📱 <span id="phc-phone">09556273936</span></div>
           <div class="phc-social">
             <a id="phc-li" href="https://www.linkedin.com/in/brent-warren-morta-60327a3b4/" target="_blank" class="phc-slink">🔗 LinkedIn</a>
@@ -717,7 +811,7 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
             <div class="ic-row"><span class="ic-k">NATIONALITY</span><span class="ic-v">Filipino</span></div>
             <div class="ic-row"><span class="ic-k">RELIGION</span><span class="ic-v">Roman Catholic</span></div>
             <div class="ic-row"><span class="ic-k">PHONE</span><span class="ic-v" id="ic-phone">09556273936</span></div>
-            <div class="ic-row"><span class="ic-k">EMAIL</span><span class="ic-v" id="ic-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80e2f2e5eef4faf9b0b1b3c0e7ede1e9ecaee3efed">[email&#160;protected]</a></span></div>
+            <div class="ic-row"><span class="ic-k">EMAIL</span><span class="ic-v" id="ic-email">brentzy013@gmail.com</span></div>
             <div class="ic-row"><span class="ic-k">LOCATION</span><span class="ic-v" id="ic-loc">Cavite City, PH</span></div>
             <div class="ic-row"><span class="ic-k">LINKEDIN</span><span class="ic-v"><a id="ic-li" href="https://www.linkedin.com/in/brent-warren-morta-60327a3b4/" target="_blank" style="color:var(--cyan)">View Profile →</a></span></div>
             <div class="ic-row"><span class="ic-k">FACEBOOK</span><span class="ic-v"><a id="ic-fb" href="https://www.facebook.com/search/top?q=Brent%20Warren%20Morta" target="_blank" style="color:var(--cyan)">Brent Warren Morta</a></span></div>
