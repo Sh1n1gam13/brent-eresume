@@ -1123,8 +1123,7 @@ function renderCerts(){
   const el=document.getElementById('cert-list');if(!el)return;
   if(!certs.length){el.innerHTML=`<div class="empty"><div class="empty-ico">📜</div><div>No certifications yet.</div><div class="empty-sub">${isAdmin?'Click + ADD CERT.':'Admin mode required.'}</div></div>`;return;}
   el.innerHTML=certs.map(c=>{
-    const viewUrl = c.fileUrl ? `https://docs.google.com/viewer?url=${encodeURIComponent(c.fileUrl)}&embedded=true` : '';
-    return`<div class="cert-card">${isAdmin?`<button class="del-btn" onclick="delItem('certifications','${c.id}')">×</button>`:''}<div class="cert-ico">📜</div><div><div class="cert-iss">${c.issuer||'Issuer'}</div><div class="cert-t">${c.title||''}</div><div class="cert-yr">${c.year||''}</div>${c.fileUrl?`<a class="cert-link" href="${viewUrl}" target="_blank" rel="noreferrer">→ VIEW CERTIFICATE</a>`:''}</div></div>`;
+    return`<div class="cert-card">${isAdmin?`<button class="del-btn" onclick="delItem('certifications','${c.id}')">×</button>`:''}<div class="cert-ico">📜</div><div><div class="cert-iss">${c.issuer||'Issuer'}</div><div class="cert-t">${c.title||''}</div><div class="cert-yr">${c.year||''}</div>${c.fileUrl?`<a class="cert-link" href="${c.fileUrl}" target="_blank" rel="noreferrer">→ VIEW CERTIFICATE</a>`:''}</div></div>`;
   }).join('');
 }
 
@@ -1366,10 +1365,22 @@ window.delEdu=async(id)=>{
 async function uploadCDN(file){
   return new Promise((res,rej)=>{
     const r=new FileReader();
+    const isPDF=file.type==="application/pdf";
     r.onload=async()=>{
-      const fd=new FormData();fd.append('file',r.result);fd.append('upload_preset',CDN.preset);
-      try{const resp=await fetch(`https://api.cloudinary.com/v1_1/${CDN.cloud}/upload`,{method:'POST',body:fd});const d=await resp.json();d.secure_url?res(d.secure_url):rej(new Error(d.error?.message||'Upload failed'));}
-      catch(e){rej(e);}
+      const fd=new FormData();
+      fd.append("file",r.result);
+      fd.append("upload_preset",CDN.preset);
+      const endpoint=isPDF
+        ?`https://api.cloudinary.com/v1_1/${CDN.cloud}/image/upload`
+        :`https://api.cloudinary.com/v1_1/${CDN.cloud}/upload`;
+      try{
+        const resp=await fetch(endpoint,{method:"POST",body:fd});
+        const d=await resp.json();
+        if(d.secure_url){
+          const url=isPDF?d.secure_url.replace(/\.pdf$/i,".jpg"):d.secure_url;
+          res(url);
+        }else{rej(new Error(d.error?.message||"Upload failed"));}
+      }catch(e){rej(e);}
     };r.onerror=rej;r.readAsDataURL(file);
   });
 }
