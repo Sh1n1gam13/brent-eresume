@@ -504,6 +504,22 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
 }
 .phc-photo-frame::before{top:-1px;left:-1px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);}
 .phc-photo-frame::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);}
+.photo-ring-outer.admin-clickable{cursor:none;}
+.photo-ring-outer.admin-clickable:hover .photo-circle::before{
+  content:'📷 CHANGE';position:absolute;inset:0;
+  background:rgba(0,0,0,.65);display:flex;align-items:center;
+  justify-content:center;font-family:'Share Tech Mono',monospace;
+  font-size:.6rem;color:var(--cyan);letter-spacing:.1em;
+  z-index:10;border-radius:50%;
+}
+.phc-photo.admin-clickable{cursor:none;}
+.phc-photo.admin-clickable:hover::before{
+  content:'📷 CHANGE PHOTO';position:absolute;inset:0;
+  background:rgba(0,0,0,.7);display:flex;align-items:center;
+  justify-content:center;font-family:'Share Tech Mono',monospace;
+  font-size:.65rem;color:var(--cyan);letter-spacing:.1em;
+  z-index:10;
+}
 </style>
 </head>
 <body>
@@ -529,14 +545,17 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
 
         <!-- PHOTO PLACEHOLDER -->
         <div class="photo-wrap a1">
-          <div class="photo-ring-outer">
+          <div class="photo-ring-outer" id="s-photo-wrap" onclick="adminPhotoClick()" title="Click to change photo (admin only)">
             <div class="photo-circle">
               <div class="photo-scan"></div>
-              <div class="photo-placeholder-ico">👤</div>
-              <div class="photo-placeholder-lbl">YOUR PHOTO</div>
+              <div id="s-photo-inner">
+                <div class="photo-placeholder-ico">👤</div>
+                <div class="photo-placeholder-lbl">YOUR PHOTO</div>
+              </div>
             </div>
           </div>
           <div class="photo-email-tag">📧 brentzy013@gmail.com</div>
+          <div class="photo-admin-hint" id="photo-admin-hint" style="display:none;font-family:'Share Tech Mono',monospace;font-size:.56rem;color:var(--amber);letter-spacing:.1em;margin-top:.2rem;">▲ CLICK PHOTO TO CHANGE</div>
         </div>
 
         <h1 class="s-name a2">
@@ -602,7 +621,7 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
     <div class="term-win">
       <div class="term-bar">
         <div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>
-        <span class="term-ttl">AUTHORIZATION TERMINAL — bwm@portfolio.exe</span>
+        <span class="term-ttl">AUTHORIZATION TERMINAL — <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7416031934041b0600121b181d1b5a110c11">[email&#160;protected]</a></span>
       </div>
       <div class="term-body">
         <div class="tl dim">$ sudo admin --portfolio=bwm --request=elevated</div>
@@ -723,6 +742,28 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
   </div>
 </div>
 
+<!-- Photo Upload Modal -->
+<div class="overlay" id="modal-photo">
+  <div class="modal">
+    <div class="modal-t">// CHANGE PROFILE PHOTO</div>
+    <div style="text-align:center;margin-bottom:1.25rem;">
+      <div id="photo-preview-wrap" style="width:100px;height:100px;border-radius:50%;border:2px solid var(--cyan);margin:0 auto .75rem;overflow:hidden;background:rgba(0,245,255,.05);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">👤</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--muted);">PREVIEW</div>
+    </div>
+    <div class="field">
+      <label class="f-lbl">Select Photo (JPG, PNG, WEBP)</label>
+      <input type="file" class="f-in" id="photo-file" accept="image/*" onchange="previewPhoto(this)"/>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--dim);margin-top:.5rem;line-height:1.6;">
+      Photo will be uploaded to Cloudinary and applied everywhere on the portfolio.
+    </div>
+    <div class="m-acts">
+      <button class="m-can" onclick="closeModal('modal-photo')">CANCEL</button>
+      <button class="m-sav" id="photo-save" onclick="savePhoto()">UPLOAD PHOTO</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- ═══════════════════════════ SCREEN 2: PORTFOLIO ══════════════════════════ -->
@@ -766,9 +807,11 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
       </div>
       <div class="phero-card">
         <div class="phc-scan"></div>
-        <div class="phc-photo">
+        <div class="phc-photo" id="phc-photo-wrap" onclick="adminPhotoClick()" title="Click to change photo (admin only)">
           <div class="phc-photo-frame"></div>
-          <div class="phc-photo-ico">👤</div>
+          <div id="phc-photo-inner">
+            <div class="phc-photo-ico">👤</div>
+          </div>
         </div>
         <div class="phc-body">
           <div class="phc-badge"><span class="live-dot" style="width:5px;height:5px;margin-right:.3rem"></span>AVAILABLE FOR INTERNSHIP</div>
@@ -811,7 +854,7 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
             <div class="ic-row"><span class="ic-k">NATIONALITY</span><span class="ic-v">Filipino</span></div>
             <div class="ic-row"><span class="ic-k">RELIGION</span><span class="ic-v">Roman Catholic</span></div>
             <div class="ic-row"><span class="ic-k">PHONE</span><span class="ic-v" id="ic-phone">09556273936</span></div>
-            <div class="ic-row"><span class="ic-k">EMAIL</span><span class="ic-v" id="ic-email">brentzy013@gmail.com</span></div>
+            <div class="ic-row"><span class="ic-k">EMAIL</span><span class="ic-v" id="ic-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="99fbebfcf7ede3e0a9a8aad9fef4f8f0f5b7faf6f4">[email&#160;protected]</a></span></div>
             <div class="ic-row"><span class="ic-k">LOCATION</span><span class="ic-v" id="ic-loc">Cavite City, PH</span></div>
             <div class="ic-row"><span class="ic-k">LINKEDIN</span><span class="ic-v"><a id="ic-li" href="https://www.linkedin.com/in/brent-warren-morta-60327a3b4/" target="_blank" style="color:var(--cyan)">View Profile →</a></span></div>
             <div class="ic-row"><span class="ic-k">FACEBOOK</span><span class="ic-v"><a id="ic-fb" href="https://www.facebook.com/search/top?q=Brent%20Warren%20Morta" target="_blank" style="color:var(--cyan)">Brent Warren Morta</a></span></div>
@@ -941,7 +984,7 @@ button{font-family:'Rajdhani',sans-serif;cursor:none;}
 </div>
 
 <!-- ═══════════════════════════ SCRIPTS ══════════════════════════════════════ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore,collection,doc,addDoc,getDocs,getDoc,setDoc,deleteDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1081,6 +1124,9 @@ async function loadAll(){
     const cSnap=await getDoc(doc(db,'cms','contact'));
     if(cSnap.exists()){Object.assign(contact,cSnap.data());applyContact();}
 
+    /* Load saved photo */
+    const phSnap=await getDoc(doc(db,'cms','photo'));
+    if(phSnap.exists()&&phSnap.data().url) applyPhoto(phSnap.data().url);
     const eSnap=await getDocs(collection(db,'experience'));
     exp=eSnap.empty?[...D_EXP]:eSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
 
@@ -1227,6 +1273,13 @@ function updateAdminUI(){
   badge.textContent=isAdmin?'ADMIN MODE':'VIEW MODE';
   badge.className='mbadge'+(isAdmin?' adm':'');
   document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'inline-flex':'none');
+  /* Photo click hint */
+  const hint=document.getElementById('photo-admin-hint');
+  const sWrap=document.getElementById('s-photo-wrap');
+  const phcWrap=document.getElementById('phc-photo-wrap');
+  if(hint) hint.style.display=isAdmin?'block':'none';
+  if(sWrap) sWrap.classList.toggle('admin-clickable',isAdmin);
+  if(phcWrap) phcWrap.classList.toggle('admin-clickable',isAdmin);
   renderAll();
 }
 
@@ -1589,6 +1642,47 @@ function initGSAP(){
   });
 }
 setTimeout(initGSAP,600);
+
+/* ════════════════ PHOTO CMS ═══════════════════ */
+function applyPhoto(url){
+  const sInner=document.getElementById('s-photo-inner');
+  if(sInner) sInner.innerHTML=`<img src="${url}" alt="Brent Warren Morta" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+  const phcInner=document.getElementById('phc-photo-inner');
+  if(phcInner) phcInner.innerHTML=`<img src="${url}" alt="Brent Warren Morta" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:0;"/>`;
+  const prev=document.getElementById('photo-preview-wrap');
+  if(prev) prev.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+}
+
+window.adminPhotoClick=()=>{
+  if(!isAdmin) return;
+  openModal('modal-photo');
+};
+
+window.previewPhoto=(input)=>{
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById('photo-preview-wrap');
+    if(prev) prev.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.savePhoto=async()=>{
+  const file=document.getElementById('photo-file').files[0];
+  if(!file){toast('Please select a photo first','err');return;}
+  setBusy('photo-save',true);
+  try{
+    const url=await uploadCDN(file);
+    await setDoc(doc(db,'cms','photo'),{url});
+    applyPhoto(url);
+    closeModal('modal-photo');
+    document.getElementById('photo-file').value='';
+    toast('Photo updated successfully!');
+  }catch(e){toast('Error: '+e.message,'err');}
+  setBusy('photo-save',false,'UPLOAD PHOTO');
+};
 
 /* ════════════════ INIT ════════════════════════ */
 loadAll();
